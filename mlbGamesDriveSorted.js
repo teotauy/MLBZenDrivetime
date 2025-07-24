@@ -1,9 +1,8 @@
-// Mapping: Team name -> {abbr, address}
 const TEAM_INFO = {
     "Arizona Diamondbacks": { abbr: "ari", address: "401 E Jefferson St, Phoenix, AZ 85004" },
     "Atlanta Braves": { abbr: "atl", address: "755 Battery Ave SE, Atlanta, GA 30339" },
     "Baltimore Orioles": { abbr: "bal", address: "333 W Camden St, Baltimore, MD 21201" },
-    "Boston Red Sox": { abbr: "bos", address: "4 Jersey St, Boston, MA 02215" },
+    "Boston Red Sox": { abbr: "bos", address: "4 Yawkey Way, Boston, MA 02215" },
     "Chicago Cubs": { abbr: "chc", address: "1060 W Addison St, Chicago, IL 60613" },
     "Chicago White Sox": { abbr: "cws", address: "333 W 35th St, Chicago, IL 60616" },
     "Cincinnati Reds": { abbr: "cin", address: "100 Joe Nuxhall Way, Cincinnati, OH 45202" },
@@ -12,7 +11,7 @@ const TEAM_INFO = {
     "Detroit Tigers": { abbr: "det", address: "2100 Woodward Ave, Detroit, MI 48201" },
     "Houston Astros": { abbr: "hou", address: "501 Crawford St, Houston, TX 77002" },
     "Kansas City Royals": { abbr: "kc", address: "1 Royal Way, Kansas City, MO 64129" },
-    "Los Angeles Angels": { abbr: "laa", address: "2000 E Gene Autry Way, Anaheim, CA 92806" },
+    "Los Angeles Angels": { abbr: "laa", address: "2000 Gene Autry Way, Anaheim, CA 92806" },
     "Los Angeles Dodgers": { abbr: "lad", address: "1000 Vin Scully Ave, Los Angeles, CA 90012" },
     "Miami Marlins": { abbr: "mia", address: "501 Marlins Way, Miami, FL 33125" },
     "Milwaukee Brewers": { abbr: "mil", address: "1 Brewers Way, Milwaukee, WI 53214" },
@@ -46,7 +45,7 @@ async function getDriveTimes(userOrigin, destinations) {
     // POST to your backend, expecting:
     //  { startLocation: "...", destinations: [address1, address2, ...] }
     // Should return [{address, driveDurationMinutes}, ...] in the same order.
-    const resp = await fetch('/api/calculate', {
+    const resp = await fetch('https://mlbzendrivetime.up.railway.app/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ startLocation: userOrigin, destinations })
@@ -86,46 +85,34 @@ async function displayTodaysGamesSortedByDrive() {
         });
 
         // Step 3: Get drive times for each game (by stadium address)
-        const addresses = gameTiles.map(tile => tile.address);
-        const driveTimes = await getDriveTimes(userOrigin, addresses);
+        const destinations = gameTiles.map(tile => tile.address);
+        const driveTimes = await getDriveTimes(userOrigin, destinations);
 
-        // Attach drive times to tiles
-        gameTiles.forEach((tile, i) => {
-            tile.driveDurationMinutes = driveTimes[i]?.driveDurationMinutes ?? null;
+        // Step 4: Sort tiles by drive time (if available)
+        const tilesWithDrives = gameTiles.map((tile, i) => ({
+            ...tile,
+            drive: driveTimes[i] && driveTimes[i].driveDurationMinutes !== undefined ? driveTimes[i].driveDurationMinutes : null
+        })).sort((a, b) => {
+            if (a.drive === null) return 1;
+            if (b.drive === null) return -1;
+            return a.drive - b.drive;
         });
 
-        // Step 4: Sort by drive time (ascending; games with no drive time go last)
-        gameTiles.sort((a, b) => {
-            if (a.driveDurationMinutes == null) return 1;
-            if (b.driveDurationMinutes == null) return -1;
-            return a.driveDurationMinutes - b.driveDurationMinutes;
-        });
-
-        // Step 5: Render tiles
-        container.innerHTML = "";
-        gameTiles.forEach(tile => {
-            const logoPath = tile.abbr ? `/logos/${tile.abbr}.svg` : "";
-            const drive = tile.driveDurationMinutes != null
-                ? (tile.driveDurationMinutes >= 60
-                    ? `${(tile.driveDurationMinutes/60).toFixed(1)} hrs`
-                    : `${Math.round(tile.driveDurationMinutes)} min`)
-                : "N/A";
-            const tileDiv = document.createElement('div');
-            tileDiv.className = "p-4 border rounded shadow-md flex flex-col items-center justify-center m-2 bg-white";
-            tileDiv.innerHTML = `
-                <img src="${logoPath}" alt="${tile.home} logo" class="w-16 h-16 mb-2" onerror="this.style.display='none'">
+        // Step 5: Render
+        container.innerHTML = tilesWithDrives.map(tile => `
+            <div class="stadium-card border-4 rounded-lg p-4 mb-4 flex flex-col items-center justify-center">
+                <img src="logos/${tile.abbr}.svg" alt="${tile.home} logo" class="w-14 h-14 mb-2" onerror="this.style.display='none'">
                 <div class="font-bold text-lg mb-1">${tile.home}</div>
-                <div class="text-sm mb-1">vs. ${tile.away}</div>
+                <div class="text-base mb-1">vs. ${tile.away}</div>
                 <div class="text-xs text-gray-600 mb-1">${tile.venue}</div>
-                <div class="text-xs text-blue-700 mb-1">${tile.time}</div>
-                <div class="text-xs text-gray-500">Drive: ${drive}</div>
-            `;
-            container.appendChild(tileDiv);
-        });
+                <div class="text-xs text-gray-600 mb-1">${tile.time}</div>
+                <div class="font-bold mt-2">${tile.drive !== null ? `${tile.drive} min drive` : "N/A"}</div>
+            </div>
+        `).join("");
     } catch (err) {
-        container.innerHTML = "<p>Failed to load today's games. Please try again later.</p>";
+        container.innerHTML = `<p class='text-center py-4 text-red-600'>Error: ${err.message}</p>`;
     }
 }
 
-// Example: attach to a button
-document.getElementById('showMLBHomeGamesBtn').onclick = displayTodaysGamesSortedByDrive;
+// Optionally, call on page load or button click
+// displayTodaysGamesSortedByDrive();
