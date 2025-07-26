@@ -81,7 +81,7 @@ async function fetchTodaysHomeGames() {
 }
 
 async function getDriveTimes(userOrigin, destinations) {
-  const resp = await fetch('/api/calculate', {
+  const resp = await fetch('http://localhost:8001/api/calculate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ startLocation: userOrigin, destinations })
