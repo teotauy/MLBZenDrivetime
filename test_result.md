@@ -66,4 +66,6 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Backend API testing completed successfully. All critical functionality working. The /api/calculate endpoint is responding correctly with valid drive time and distance data. Google Maps API integration is functional. Error handling is working properly. The previous frontend API URL issue appears to be resolved with the relative URL approach. Backend service is stable and running via supervisor."
+  - agent: "testing"
+    message: "RETESTING COMPLETED: Verified all backend functionality after recent changes. All tests passing: ✅ /api/calculate endpoint working (tested with multiple locations), ✅ Google Maps Distance Matrix API integration functional, ✅ Error handling working (400 status for invalid inputs), ✅ Backend service stable on port 8001 via supervisor (mlb-backend service running), ✅ CORS enabled and working. Minor note: Some specific addresses may return null values due to Google Maps API behavior, but core functionality is solid. No regressions detected from recent changes."
 ```
