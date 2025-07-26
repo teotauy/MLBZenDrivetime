@@ -68,34 +68,28 @@ initAutocomplete();
 const GREEN_THRESHOLD = 60;
 const YELLOW_THRESHOLD = 0;
 
-function addUseLocationButton() {
-  if (document.getElementById('useLocationBtn')) return;
-  const btn = document.createElement('button');
-  btn.id = "useLocationBtn";
-  btn.className = "ml-4 px-4 py-2 bg-blue-700 text-white rounded shadow hover:bg-blue-900 transition";
-  btn.textContent = "Use My Location";
-  startLocationInput.parentNode.appendChild(btn);
-
-  btn.addEventListener('click', async () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
-    btn.disabled = true;
-    btn.textContent = "Locating...";
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      startLocationInput.value = `${latitude},${longitude}`;
-      btn.textContent = "Use My Location";
-      btn.disabled = false;
-    }, () => {
-      alert("Unable to retrieve your location.");
-      btn.textContent = "Use My Location";
-      btn.disabled = false;
-    });
+// Handle "Use My Location" button
+const useLocationBtn = document.getElementById('useLocationBtn');
+useLocationBtn.addEventListener('click', async () => {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+  useLocationBtn.disabled = true;
+  useLocationBtn.textContent = "Locating...";
+  
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
+    startLocationInput.value = `${latitude},${longitude}`;
+    useLocationBtn.textContent = "Use My Location";
+    useLocationBtn.disabled = false;
+  }, (error) => {
+    console.error('Geolocation error:', error);
+    alert("Unable to retrieve your location. Please ensure location permissions are enabled.");
+    useLocationBtn.textContent = "Use My Location";
+    useLocationBtn.disabled = false;
   });
-}
-addUseLocationButton();
+});
 
 function formatTime(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
