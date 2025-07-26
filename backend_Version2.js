@@ -35,4 +35,5 @@ app.post('/api/calculate', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('Backend running on :3000'));
+const PORT = process.env.PORT || 8001;
+app.listen(PORT, '0.0.0.0', () => console.log(`Backend running on :${PORT}`));
