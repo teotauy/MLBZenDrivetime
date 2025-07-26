@@ -104,7 +104,8 @@ useLocationBtn.addEventListener('click', async () => {
   
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const { latitude, longitude } = pos.coords;
-    startLocationInput.value = `${latitude},${longitude}`;
+    const currentInput = window.startLocationInput || startLocationInput;
+    currentInput.value = `${latitude},${longitude}`;
     useLocationBtn.textContent = "Use My Location";
     useLocationBtn.disabled = false;
   }, (error) => {
