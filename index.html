@@ -96,7 +96,10 @@
         <div class="scoreboard p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex-1">
                 <label for="startLocation" class="text-lg font-semibold text-gray-100">Your Starting Address or ZIP</label>
-                <input type="text" id="startLocation" placeholder="e.g., 123 Main St, Brooklyn, NY 11201" class="mt-2 p-3 border border-gray-300 rounded-md shadow-sm w-full md:w-64">
+                <div class="flex gap-2 mt-2">
+                    <input type="text" id="startLocation" placeholder="e.g., 123 Main St, Brooklyn, NY 11201" class="p-3 border border-gray-300 rounded-md shadow-sm flex-1">
+                    <button id="useLocationBtn" class="px-4 py-3 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition duration-200 font-medium whitespace-nowrap">Use My Location</button>
+                </div>
             </div>
             <button id="calculateBtn" class="relative px-8 py-3 text-xl rounded-lg bg-[#BA0C2F] text-white font-bold shadow-md hover:bg-[#002D72] transition duration-200 uppercase tracking-wider">
                 <span class="home-plate"></span>
