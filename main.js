@@ -104,10 +104,10 @@ async function fetchTodaysHomeGames() {
 
 async function getDriveTimes(userOrigin, destinations) {
   try {
-    // Use the local backend running on port 8001
-    const backendUrl = 'http://localhost:8001';
+    // Use window.location.origin to ensure proper routing via Kubernetes ingress
+    const apiUrl = `${window.location.origin}/api/calculate`;
     
-    const resp = await fetch(`${backendUrl}/api/calculate`, {
+    const resp = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ startLocation: userOrigin, destinations })
