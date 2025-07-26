@@ -138,7 +138,7 @@ function getBorderColorClass(minutesBeforeFirstPitch) {
 }
 
 async function renderTodaysMLBStadiumCards() {
-  const userOrigin = (window.startLocationInput || startLocationInput).value.trim();
+  const userOrigin = startLocationInput.value.trim();
   stadiumGrid.innerHTML = "";
   if (!userOrigin) {
     stadiumGrid.innerHTML = "<p class='text-center py-4'>Please enter your starting address or ZIP above.</p>";
