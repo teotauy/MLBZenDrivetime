@@ -37,47 +37,23 @@ const calculateBtn = document.getElementById('calculateBtn');
 const loadingIndicator = document.getElementById('loadingIndicator');
 const stadiumGrid = document.getElementById('stadiumGrid');
 
-// Initialize Google Places Autocomplete using the new PlaceAutocompleteElement
-let autocompleteElement;
+// Initialize Google Places Autocomplete
+let autocomplete;
 function initAutocomplete() {
   if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-    // Check if the new PlaceAutocompleteElement is available (recommended approach)
-    if (google.maps.places.PlaceAutocompleteElement) {
-      // Create the new autocomplete element
-      autocompleteElement = new google.maps.places.PlaceAutocompleteElement();
-      autocompleteElement.className = 'p-3 border border-gray-300 rounded-md shadow-sm flex-1';
-      autocompleteElement.placeholder = 'e.g., 123 Main St, Brooklyn, NY 11201';
-      autocompleteElement.id = 'startLocation';
-      
-      // Replace the existing input with the new element
-      const parentDiv = startLocationInput.parentNode;
-      parentDiv.replaceChild(autocompleteElement, startLocationInput);
-      
-      // Update the reference to the new element
-      window.startLocationInput = autocompleteElement;
-      
-      // Handle place selection
-      autocompleteElement.addEventListener('gmp-placeselect', (event) => {
-        const place = event.place;
-        if (!place.geometry) {
-          console.log("No location data available for input: '" + place.name + "'");
-        }
-      });
-    } else {
-      // Fallback to the legacy Autocomplete (with suppressed warnings)
-      autocomplete = new google.maps.places.Autocomplete(startLocationInput, {
-        types: ['address'],
-        componentRestrictions: { country: ['US', 'CA'] }
-      });
-      
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) {
-          console.log("No location data available for input: '" + place.name + "'");
-          return;
-        }
-      });
-    }
+    autocomplete = new google.maps.places.Autocomplete(startLocationInput, {
+      types: ['address'],
+      componentRestrictions: { country: ['US', 'CA'] }
+    });
+    
+    // Optional: Handle place selection
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        console.log("No location data available for input: '" + place.name + "'");
+        return;
+      }
+    });
   } else {
     // Retry initialization after a short delay if Google Maps API hasn't loaded yet
     setTimeout(initAutocomplete, 500);
