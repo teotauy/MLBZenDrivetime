@@ -109,12 +109,28 @@ async function fetchTodaysHomeGames() {
 }
 
 async function getDriveTimes(userOrigin, destinations) {
-  const resp = await fetch('/api/calculate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ startLocation: userOrigin, destinations })
-  });
-  return await resp.json();
+  try {
+    const resp = await fetch('/api/calculate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ startLocation: userOrigin, destinations })
+    });
+    
+    if (!resp.ok) {
+      throw new Error(`Backend API error: ${resp.status} ${resp.statusText}`);
+    }
+    
+    const result = await resp.json();
+    
+    if (result.error) {
+      throw new Error(`API Error: ${result.error}`);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Drive times API error:', error);
+    throw error;
+  }
 }
 
 function getBorderColorClass(minutesBeforeFirstPitch) {
