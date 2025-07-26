@@ -221,7 +221,20 @@ async function renderTodaysMLBStadiumCards() {
     });
 
   } catch (err) {
-    stadiumGrid.innerHTML = "<p class='text-center py-4'>Failed to load drive times or games. Please try again.</p>";
+    console.error('Error loading games or drive times:', err);
+    let errorMessage = "Unable to calculate drive times. ";
+    
+    if (err.message.includes('Backend API error')) {
+      errorMessage += "Backend service is unavailable. Please try again later.";
+    } else if (err.message.includes('API Error')) {
+      errorMessage += err.message.replace('API Error: ', '');
+    } else if (err.message.includes('fetch')) {
+      errorMessage += "Network connection error. Please check your internet connection.";
+    } else {
+      errorMessage += "Please try again or contact support if the problem persists.";
+    }
+    
+    stadiumGrid.innerHTML = `<p class='text-center py-4 text-red-600'>${errorMessage}</p>`;
   }
   loadingIndicator.classList.add('hidden');
   calculateBtn.disabled = false;
