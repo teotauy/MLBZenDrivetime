@@ -191,7 +191,6 @@ async function renderTodaysMLBStadiumCards() {
 
     stadiumGrid.innerHTML = "";
     gameTiles.forEach(tile => {
-      const logoPath = tile.abbr ? `/logos/${tile.abbr}.svg` : "";
       const driveDistance = tile.driveDistanceMiles != null ? `${tile.driveDistanceMiles.toFixed(1)} miles` : "N/A";
       const driveTime = tile.driveDurationMinutes != null ? (
         tile.driveDurationMinutes >= 60
@@ -204,7 +203,9 @@ async function renderTodaysMLBStadiumCards() {
       const card = document.createElement('div');
       card.className = `stadium-card max-w-xs w-full mx-2 mb-6 p-4 rounded-lg shadow-md flex flex-col items-center bg-white hover:shadow-2xl transition ${borderClass}`;
       card.innerHTML = `
-        <img src="${logoPath}" alt="${tile.home} logo" class="mx-auto mb-2 w-16 h-16" onerror="this.style.display='none'"/>
+        <div class="team-logo-placeholder mx-auto mb-2 w-16 h-16 bg-gradient-to-br from-blue-600 to-red-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+          ${tile.abbr.toUpperCase()}
+        </div>
         <h3 class="text-lg font-bold text-gray-800 mb-1 text-center">${tile.stadium}</h3>
         <div class="mb-1 text-base font-semibold">${matchup}</div>
         <div class="text-sm mb-1">First pitch: ${formatTime(tile.firstPitch)}</div>
