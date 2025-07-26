@@ -239,7 +239,7 @@ async function renderTodaysMLBStadiumCards() {
 }
 
 calculateBtn.addEventListener('click', renderTodaysMLBStadiumCards);
-(window.startLocationInput || startLocationInput).addEventListener('keydown', e => {
+startLocationInput.addEventListener('keydown', e => {
   if (e.key === "Enter") renderTodaysMLBStadiumCards();
 });
 stadiumGrid.innerHTML = "<p class='text-center py-4'>Enter your starting address or ZIP, then click 'Calculate'.</p>";
