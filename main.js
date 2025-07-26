@@ -81,7 +81,7 @@ async function fetchTodaysHomeGames() {
 }
 
 async function getDriveTimes(userOrigin, destinations) {
-  const resp = await fetch('https://mlbzendrivetime.up.railway.app/api/calculate', {
+  const resp = await fetch('/api/calculate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ startLocation: userOrigin, destinations })
