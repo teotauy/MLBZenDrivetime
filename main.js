@@ -104,10 +104,8 @@ async function fetchTodaysHomeGames() {
 
 async function getDriveTimes(userOrigin, destinations) {
   try {
-    // Use the backend URL from environment, fallback to local for development
-    const backendUrl = typeof process !== 'undefined' && process.env.base_url 
-      ? process.env.base_url 
-      : 'https://demobackend.emergentagent.com';
+    // Use the local backend running on port 8001
+    const backendUrl = 'http://localhost:8001';
     
     const resp = await fetch(`${backendUrl}/api/calculate`, {
       method: 'POST',
