@@ -104,7 +104,12 @@ async function fetchTodaysHomeGames() {
 
 async function getDriveTimes(userOrigin, destinations) {
   try {
-    const resp = await fetch('/api/calculate', {
+    // Use the backend URL from environment, fallback to local for development
+    const backendUrl = typeof process !== 'undefined' && process.env.base_url 
+      ? process.env.base_url 
+      : 'https://demobackend.emergentagent.com';
+    
+    const resp = await fetch(`${backendUrl}/api/calculate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ startLocation: userOrigin, destinations })
