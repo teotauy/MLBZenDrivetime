@@ -37,6 +37,34 @@ const calculateBtn = document.getElementById('calculateBtn');
 const loadingIndicator = document.getElementById('loadingIndicator');
 const stadiumGrid = document.getElementById('stadiumGrid');
 
+// Initialize Google Places Autocomplete
+let autocomplete;
+function initAutocomplete() {
+  if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+    autocomplete = new google.maps.places.Autocomplete(startLocationInput, {
+      types: ['address'],
+      componentRestrictions: { country: ['US', 'CA'] }
+    });
+    
+    // Optional: Handle place selection
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        console.log("No location data available for input: '" + place.name + "'");
+        return;
+      }
+    });
+  } else {
+    // Retry initialization after a short delay if Google Maps API hasn't loaded yet
+    setTimeout(initAutocomplete, 500);
+  }
+}
+
+// Initialize autocomplete when the page loads
+document.addEventListener('DOMContentLoaded', initAutocomplete);
+// Also try to initialize immediately in case DOMContentLoaded has already fired
+initAutocomplete();
+
 const GREEN_THRESHOLD = 60;
 const YELLOW_THRESHOLD = 0;
 
